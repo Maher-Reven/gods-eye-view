@@ -148,6 +148,29 @@ test('camera type labels are translated, and an unknown type fails OPEN', () => 
   assert.equal(amsterdamCameraTypeLabel(null), '');
 });
 
+test('a blank detailed type falls back to the coarse type', () => {
+  // 35 of the 404 rows with a usable position carry no `typeGedetailleerd`,
+  // but EVERY row carries `type: "Verkeerscamera"`, so those rows can still be
+  // labelled rather than left bare.
+  assert.equal(amsterdamCameraTypeLabel('', 'Verkeerscamera'), 'Traffic camera');
+  assert.equal(amsterdamCameraTypeLabel(null, 'Verkeerscamera'), 'Traffic camera');
+  // The detailed type still wins when both are present.
+  assert.equal(
+    amsterdamCameraTypeLabel('ANPR camera S100', 'Verkeerscamera'),
+    'ANPR — S100 ring',
+  );
+  // An unknown coarse type still fails OPEN rather than blanking.
+  assert.equal(amsterdamCameraTypeLabel('', 'Iets nieuws'), 'Iets nieuws');
+  assert.equal(amsterdamCameraTypeLabel('', ''), '');
+});
+
+test('a row with only the coarse type is named from it', () => {
+  const [camera] = normalizeAmsterdamCameraRecords([
+    row({ objectnummer: 'TVK-7', standplaats: 'Prins Hendrikkade', typeGedetailleerd: '', type: 'Verkeerscamera' }),
+  ]);
+  assert.equal(camera.name, 'Prins Hendrikkade (Traffic camera)');
+});
+
 test('a row with no street name still gets a usable label', () => {
   const [camera] = normalizeAmsterdamCameraRecords([
     row({ objectnummer: 'CAM-9', standplaats: '', typeGedetailleerd: 'TV camera' }),
