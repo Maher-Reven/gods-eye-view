@@ -1,4 +1,5 @@
 import { isPositionOnlySource } from '../../sources/cctvTypes.js';
+import { t } from '../../i18n/index.js';
 import {
   FRAME_SIGNATURE_W,
   FRAME_SIGNATURE_H,
@@ -192,9 +193,13 @@ export function createFrames({ state: layerState, services, parts, source }) {
     // A position-only camera states WHY there is no picture, rather than
     // reading as a feed that happens to be down. The installation is the
     // observed fact here; the absent frame is not a fault.
+    // Same two catalog keys the panel badge uses (src/ui/cctvFrames.js), so
+    // the plane and the badge never drift apart or disagree on language. The
+    // other branch is the server's own English health text, which this canvas
+    // has always drawn as-is.
     const status = String(
       isPositionOnlySource(camera)
-        ? 'NO PUBLIC FEED · POSITION ONLY'
+        ? `${t('NO PUBLIC FEED')} · ${t('POSITION ONLY')}`
         : health?.message || health?.status || camera?.feedType || 'NO FEED',
     ).toUpperCase();
 

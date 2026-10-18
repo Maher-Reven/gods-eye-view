@@ -2299,7 +2299,11 @@ export function normalizeAmsterdamCameraRecords(records) {
 
 /**
  * Fetch the City of Amsterdam public traffic-camera register.
- * `CCTV_AMSTERDAM_ENABLED=0` disables the pack.
+ *
+ * OPT-IN: the pack loads only with `CCTV_AMSTERDAM_ENABLED=1`. The dataset
+ * names no open licence — its schema says only "openbaar, tenzij anders
+ * aangegeven / behoudens uitzonderingen" — so an unset flag never reaches the
+ * upstream (gated in catalog.js; see DATA_SOURCES.md).
  *
  * Keyless today: an optional AMSTERDAM_DATA_API_KEY rides as `X-Api-Key`,
  * because the DSO platform has announced that keys become mandatory on a date
